@@ -1,0 +1,277 @@
+{
+  "platform": {
+    "name": "WagerVS",
+    "tagline": "Compete against AI predictions and other players in short, skill-based wager pools. Earn points, climb levels, and share in global prize pools.",
+    "modes": ["PvP", "PvE"],
+    "no_cash_outs": true,
+    "biweekly_cycle_days": 14
+  },
+
+  "currency": {
+    "chips": {
+      "description": "In-game currency used to enter wagers and create wagers.",
+      "usage": ["stake_in_wagers", "create_user_generated_wagers", "buy_items_in_store"]
+    },
+    "vs_token": {
+      "description": "Platform token ($VS). Used to fund chips, unlock perks, and pay creators.",
+      "notes": "Creators and leaderboard winners are rewarded in value derived from VS."
+    }
+  },
+
+  "wagers": {
+    "types": {
+      "pvp": {
+        "description": "Players bet against each other on an outcome (YES/NO or Side A/Side B). Winners split the losing side's pot proportionally after fees."
+      },
+      "pve": {
+        "description": "Players bet for or against an AI-generated prediction line. Beating the AI can generate bonus points."
+      }
+    },
+    "user_generated_wager_cost_chips_usd_equivalent": 30,
+    "creator_can_set_platform_fee_pct_range": [1, 5],
+    "lock_behavior": "Once a wager locks, no new entries can join. When the real-world outcome is known, it resolves and payouts are calculated."
+  },
+
+  "economy": {
+    "pvp_fee_breakdown": {
+      "global_prize_pool_pct": 7.5,
+      "platform_fee_pct": 1.0,
+      "company_rake_pct": 2.5,
+      "notes": "These percentages are taken out of total PvP pots before calculating final payouts to winners."
+    },
+    "creator_fee": {
+      "creator_sets_pct_between": [1, 5],
+      "revenue_split": {
+        "creator_pct_of_fee": 50,
+        "prize_pool_pct_of_fee": 25,
+        "platform_pct_of_fee": 25
+      },
+      "notes": "Platform fee for a creator's wager is split 50/25/25 between creator, global prize pool, and platform."
+    },
+    "payouts": {
+        "method": "proportional",
+        "description": "After fees are applied, the remaining losing side pot is distributed proportionally to the winners based on how much each winner staked.",
+        "example_logic": "user_payout = user_stake + (user_stake / total_winning_side_stake) * remaining_losing_side_pot_after_fees"
+    }
+  },
+
+  "prize_pool": {
+    "funding_sources": [
+      "7.5% of every PvP pot",
+      "25% share of all creator platform fees",
+      "sponsored/partner allocations",
+      "optional store % in future"
+    ],
+    "distribution_schedule": "biweekly",
+    "points_reset_each_cycle": true,
+    "company_rake_pct_per_distribution": 2.5,
+    "payout_formula": "user_share_pct = user_points_in_cycle / total_points_in_cycle",
+    "notes": "After each biweekly cycle ends, points reset to 0 for all users, the pool is paid out, and a new cycle begins."
+  },
+
+  "points": {
+    "what_points_do": [
+      "Determine share of the biweekly prize pool",
+      "Drive leaderboard position",
+      "Feed level progression (along with lifetime performance)"
+    ],
+    "reset_behavior": {
+      "resets_every_cycle": true,
+      "cycle_length_days": 14,
+      "reason": "This encourages users to stay active and earn points again each new prize cycle."
+    },
+    "earn_actions": [
+      {
+        "action": "enter_wager",
+        "description": "User joins an active wager (PvP or PvE) with chips and earns base points."
+      },
+      {
+        "action": "win_wager",
+        "description": "User wins a wager and earns bonus points based on stake size and risk."
+      },
+      {
+        "action": "create_wager_with_activity",
+        "description": "User-created wager gets other participants. Creator earns points for engagement."
+      },
+      {
+        "action": "referral_activity",
+        "description": "User brings in new players who actually wager. Referrer earns ongoing % of those points."
+      },
+      {
+        "action": "beat_ai_in_pve",
+        "description": "User wins against the AI line in PvE mode and earns a bonus multiplier."
+      }
+    ],
+    "referral_rules": {
+      "tier_1_share_of_points_pct": 10,
+      "tier_2_share_of_points_pct": 2,
+      "activation_condition": "referred user must actually place at least one wager",
+      "level_bonus_trigger": "if referred user reaches Level 2 (Creator), referrer gets a one-time VS-style bonus"
+    }
+  },
+
+  "levels": {
+    "description": "Levels are persistent access tiers. They unlock UI visibility, creator tools, analytics, AI insight depth, and social flex. Levels are shown on Profile. Perks and purchasables are surfaced in the Store.",
+    "levels": [
+      {
+        "level": 1,
+        "name": "Contender",
+        "role": "Entry tier for all players.",
+        "unlocks": [
+          "Access to all public PvP wagers and PvE wagers",
+          "Basic AI reasoning shown on wager cards (short summary only)",
+          "Eligible to earn Points and get prize pool share during biweekly payout",
+          "Can generate referral link (Tier 1 referrals)"
+        ],
+        "cycle_rewards_examples": [
+          "Small chip bundle (low amount, e.g. ~25-50 chips)",
+          "1 premium AI render per cycle (image/visual asset for flex/profile/share)",
+          "Leaderboard visibility (can appear on global leaderboard)"
+        ],
+        "ui_access": [
+          "How-To-Play / onboarding guide",
+          "Basic stats in profile: recent wagers, win/loss record"
+        ]
+      },
+      {
+        "level": 2,
+        "name": "Creator",
+        "role": "Unlocks ability to create wagers and earn from them.",
+        "unlocks": [
+          "Can create user-generated wagers (costs $30 worth of VS Chips per new wager)",
+          "Can set platform fee for their wagers between 1% and 5%",
+          "Earns 50% of the platform fee generated by their wagers (with 25% going to prize pool, 25% to platform)",
+          "Enhanced AI reasoning on wager cards (adds reasoning summary + model confidence)",
+          "Creator Dashboard in profile (wager performance, participants, fees earned)"
+        ],
+        "cycle_rewards_examples": [
+          "Chip bonus (e.g. ~100-200 chips)",
+          "1 free user-generated wager credit per cycle (no $30 VS chip cost)",
+          "Creator badge on profile and in wager listings"
+        ],
+        "ui_access": [
+          "Create Wager button enabled",
+          "Creator Tools section in Store becomes visible",
+          "Revenue/engagement metrics in profile"
+        ]
+      },
+      {
+        "level": 3,
+        "name": "Strategist",
+        "role": "Unlocks private wagers and deeper analytics.",
+        "unlocks": [
+          "All Level 2 features",
+          "Can host private / invite-only wagers or community pools",
+          "Access to Pro Insights: market trends, engagement stats, and historical performance data",
+          "Advanced AI reasoning depth (trend breakdowns, matchup-style analysis, crowd behavior indicators)",
+          "Confidence breakdown overlays directly on wager cards"
+        ],
+        "cycle_rewards_examples": [
+          "Chip bonus (~250-400 chips)",
+          "Reduced creation cost (discount on the $30 VS chip cost to start a wager)",
+          "Pro Access badge"
+        ],
+        "ui_access": [
+          "Analytics tab in Profile (ROI per wager, average pool size, creator earnings)",
+          "Pro Insights section available in Store"
+        ]
+      },
+      {
+        "level": 4,
+        "name": "Elite",
+        "role": "Top-tier access. Unlocks full AI intelligence and visibility boosts.",
+        "unlocks": [
+          "All Level 3 features",
+          "AI-Enhanced Reasoning feed: full depth model output (confidence trends, sentiment, predictive lean)",
+          "Insider/Elite-only wager categories and 'Elite Lounge' pools",
+          "Priority placement / featuring of your created wagers in public feeds",
+          "Ability to publish AI reasoning threads alongside your wagers (social clout / authority)",
+          "Access to live AI stats dashboard (model accuracy tracking, win % vs users)"
+        ],
+        "cycle_rewards_examples": [
+          "Large chip bonus (~500+ chips)",
+          "Premium AI-rendered highlight asset per cycle (e.g. social-ready graphic/video style asset)",
+          "Elite Creator badge (shown next to handle on wagers)",
+          "Store discounts (up to ~50% off certain AI/insight items)"
+        ],
+        "ui_access": [
+          "Insider View toggle on wager cards (extra reasoning layers visible only to Elite)",
+          "Elite Store category (exclusive analytics / cosmetic / flex items)",
+          "Public visibility as 'featured creator' on main feed"
+        ]
+      }
+    ]
+  },
+
+  "ai": {
+    "usage": {
+      "pve_lines": "AI generates predictive lines and confidence values that users can bet for/against in PvE wagers.",
+      "wager_reasoning": "AI generates reasoning text for each wager. The amount of reasoning exposed to a user depends on their Level.",
+      "model_tracking": "We track AI's performance versus human players over time for credibility and bragging rights."
+    },
+    "reasoning_visibility_by_level": {
+      "1": "Short summary only",
+      "2": "Summary + model confidence % and main claim",
+      "3": "Full breakdown (trend, crowd behavior, contextual logic)",
+      "4": "Insider/Elite view (confidence evolution, sentiment, momentum indicators)"
+    },
+    "beat_ai_bonus": {
+      "description": "When a user takes the opposite side of the AI's prediction in PvE and wins, they get bonus points.",
+      "effect": "Multiplies the normal points earned from that win for that cycle."
+    }
+  },
+
+  "referrals": {
+    "referral_link_per_user": true,
+    "earn_window_days": 30,
+    "tiered": {
+      "tier_1": {
+        "points_share_pct": 10,
+        "description": "Referrer earns % of referred user's points for 30 days."
+      },
+      "tier_2": {
+        "points_share_pct": 2,
+        "description": "Referrer earns a small % of the points generated by people who were invited by their direct referrals."
+      }
+    },
+    "level_bonus": {
+      "trigger": "referred_user_reaches_level_2",
+      "reward_type": "one-time VS-style reward to referrer"
+    },
+    "anti_fraud": [
+      "referred account must place at least one real wager",
+      "duplicate/inactive accounts do not qualify for payout"
+    ]
+  },
+
+  "ui_guidance": {
+    "where_things_live": {
+      "profile": [
+        "User Level and progress bar",
+        "Badges (Creator, Pro Access, Elite Creator)",
+        "Wager performance stats",
+        "Referral link and referral stats",
+        "Analytics tab for higher levels",
+        "AI reasoning depth indicator (what tier of reasoning you see)"
+      ],
+      "store": [
+        "Creator Tools (visible at Level 2+)",
+        "Pro Insights / analytics bundles (Level 3+)",
+        "Elite-only data products, cosmetic unlocks, AI renders (Level 4)",
+        "Discounted wager creation credits for higher levels"
+      ],
+      "global": [
+        "Prize Pool tracker",
+        "Leaderboard",
+        "Feed of active wagers with lock timers",
+        "How-To-Play / onboarding modal"
+      ]
+    },
+    "cycle_reset_rules": {
+      "points_reset_biweekly": true,
+      "prize_pool_payout_biweekly": true,
+      "levels_persist": true,
+      "notes": "Every 14 days: pool pays out to users based on that cycle's Points. Then Points reset to 0 for all players, new cycle starts, levels remain."
+    }
+  }
+}
